@@ -1,0 +1,115 @@
+<?php
+session_start();
+
+require_once("fonctions.php");
+require_once("bd.php");
+
+if (!isset($_SESSION["nom_admin"]) || empty($_SESSION["nom_admin"]) || 
+    !isset($_SESSION["email_admin"]) || empty($_SESSION["email_admin"]) || 
+    !isset($_SESSION["type_admin"]) || empty($_SESSION["type_admin"])) {
+    header("Location: login.php");
+    exit();
+}
+
+if(isset($_GET["id_livre"]) && !empty($_GET["id_livre"])){
+    $id_livre=check_input($_GET["id_livre"]);
+    $sql = $connect->query("SELECT * FROM livres li INNER JOIN categories  cat on cat.id_categorie=li.id_categorie WHERE id_livre=?");
+    $sql->execute(array($id_livre));
+    $livre=$sql->fetch();
+    }
+$imageError = $namError = $typeError = $descriptionError = $fileError = "";
+$ok = true; $mod_pic=$mod_file=false;
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+     if(!empty($_POST["livreName"]) && isset($_POST["livreName"])){
+        $nom_livre = check_input($_POST["livreName"]); }
+        else{
+            $namError = "Veuillez renseigner le nom";
+             $ok = false;
+        }   
+        if(!empty($_POST["id_livre"]) && isset($_POST["id_livre"])){
+            $nom_livre = check_input($_POST["id_livre"]); 
+        }
+            else{
+                $namError = "Veuillez renseigner le nom";
+                 $ok = false;
+            }     
+        if(!empty($_POST["categorie"]) && isset($_POST["categorie"])){
+            $categorie = check_input($_POST["categorie"]); }
+            else{
+                $categorieError = "Veuillez sélectionner une catégorie";
+                 $ok = false;
+            }
+            if(!empty($_POST["description"]) && isset($_POST["description"])){
+                $description = check_input($_POST["description"]); }
+                else{
+                    $descriptionError = "Veuillez fournir une description";
+                     $ok = false;
+                }
+    if (!empty($_FILES["profilePic"]["name"]) && isset($_FILES["profilePic"]["name"])) {
+        $target_dir = "images/";
+        $target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+        $mod_pic=true;
+
+        // Vérification du type de fichier
+        $allowed_types = ["jpg", "jpeg", "png", "gif"];
+        if (!in_array(strtolower($imageFileType), $allowed_types)) {
+            $imageError = "Seuls les formats JPG, JPEG, PNG et GIF sont acceptés.";
+            $ok = false;
+        } else {
+            $newfilename = round(microtime(true)) . '.' . $imageFileType;
+            $newfilepath = $target_dir . $newfilename;
+
+            if (!move_uploaded_file($_FILES["profilePic"]["tmp_name"], $newfilepath)) {
+                $imageError = "Erreur lors de l'upload de l'image.";
+                $ok = false;
+            }
+        }
+    }
+    // Validation du fichier du livre
+    if (!empty($_FILES["file1"]["name"])) {
+        $mod_file=true;
+        $target_file = "livres/" . basename($_FILES["file1"]["name"]);
+        if (!move_uploaded_file($_FILES["file1"]["tmp_name"], $target_file)) {
+            $fileError = "Erreur lors de l'upload du fichier.";
+            $ok=false;
+
+        }
+    }
+
+    // Insertion dans la base de données si tout est valide
+    if ($ok && $mod_file && $mod_pic) {
+        $sql = $connect->prepare("UPDATE livres SET nom_livre=?, photo_livre=?, description_livre=?, id_categorie=?, fichier_livre=? WHERE id_livre=?) VALUES (?, ?, ?, ?, ?,?)");
+        $result = $sql->execute([$nom_livre, $newfilename, $description, $categorie, basename($_FILES["file1"]["name"], $id_livre)]);
+        if ($result) {
+            header("Location: librairie.php");
+            exit();
+        } else {
+            $fileError = "Erreur lors de l'insertion dans la base de données.";
+        }
+    }else if($ok && $mod_file){
+        $sql = $connect->prepare("UPDATE livres SET nom_livre=?, description_livre=?, id_categorie=?, fichier_livre=? WHERE id_livre=?) VALUES (?, ?, ?, ?, ?,?)");
+        $result = $sql->execute([$nom_livre, $description, $categorie, basename($_FILES["file1"]["name"], $id_livre)]);
+        if ($result) {
+            header("Location: librairie.php");
+            exit();
+        } else {
+            $fileError = "Erreur lors de l'insertion dans la base de données.";
+        }
+
+    }
+    else if($ok && $mod_pic){
+        $sql = $connect->prepare("UPDATE livres SET nom_livre=?, description_livre=?, id_categorie=?, photo_livre=? WHERE id_livre=?) VALUES (?, ?, ?, ?, ?,?)");
+        $result = $sql->execute([$nom_livre, $description, $categorie, $newfilename,$id_livre]);
+        if ($result) {
+            header("Location: librairie.php");
+            exit();
+        } else {
+            $fileError = "Erreur lors de l'insertion dans la base de données.";
+        }
+
+    }
+}
+?>

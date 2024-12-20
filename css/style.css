@@ -1,0 +1,15 @@
+#paginationE{
+  text-align: right;
+  
+}
+.active{
+  background-color: black;
+  color: white;
+  padding: 2px;
+}
+.titre{
+  text-decoration: solid;
+  color: rgb(99, 94, 94);
+  font-style: italic;
+  font-weight: bold;
+}
