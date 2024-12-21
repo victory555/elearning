@@ -34,9 +34,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="./pages/dashboard.html">
+          <a class="nav-link text-white" href="cours.php">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <span class="fas fa-book-open"></span>
+              <span class="fas fa-book-open-reader"></span>
             </div>
             <span class="nav-link-text ms-1">Cours</span>
           </a>
@@ -58,7 +58,31 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="./pages/dashboard.html">
+          <a class="nav-link text-white" href="lecon.php">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="fas fa-user-circle"></span>
+            </div>
+            <span class="nav-link-text ms-1">lécon</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="cours_tags.php">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="fas fa-user-circle"></span>
+            </div>
+            <span class="nav-link-text ms-1">Tag au cours</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="profil.php">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="fas fa-user-circle"></span>
+            </div>
+            <span class="nav-link-text ms-1">Mon profil</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="blog.php">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <span class="fas fa-blog"></span>
             </div>
